@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body>
+        <a href="#" onclick="navigate('first-page'); return false;">First page</a>
+        <a href="#" onclick="navigate('second-page'); return false;">Second page</a>
+        <a href="#" onclick="navigate('third-page'); return false;">Third page</a>
+        <p id="current-page" />
+        <script>
+            window.onload = function () {
+                const path = window.location.pathname.split("/").pop().split(".")[0];
+                const page = path === "" ? "first-page" : path;
+                document.getElementById("current-page").innerText = "Current page: " + page.replace("-", " ");
+                document.title = page.replace("-", " ").replace(/\b\w/g, (char) => char.toUpperCase());
+            };
+            function navigate(page) {
+                const oldPath = window.location.pathname.split("/").pop().split(".")[0];
+                const newPath = page;
+
+                function typeWriterEffect(text, callback) {
+                    let i = 0;
+                    function type() {
+                        if (i < text.length) {
+                            history.replaceState(null, "", "/" + text.substring(0, i + 1));
+                            i++;
+                            setTimeout(type, 50);
+                        } else if (callback) {
+                            callback();
+                        }
+                    }
+                    type();
+                }
+
+                function deleteEffect(text, callback) {
+                    let i = text.length;
+                    function deleteChar() {
+                        if (i > 0) {
+                            history.replaceState(null, "", "/" + text.substring(0, i - 1));
+                            i--;
+                            setTimeout(deleteChar, 50);
+                        } else if (callback) {
+                            callback();
+                        }
+                    }
+                    deleteChar();
+                }
+
+                deleteEffect(oldPath, () => {
+                    typeWriterEffect(newPath, () => {
+                        document.getElementById("current-page").innerText = "Current page: " + page.replace("-", " ");
+                        document.title =
+                            page.replace("-", " ").replace(/\b\w/g, (char) => char.toUpperCase());
+                    });
+                });
+            }
+        </script>
+    </body>
+</html>
