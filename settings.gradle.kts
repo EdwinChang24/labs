@@ -20,3 +20,4 @@ plugins {
 rootProject.name = "labs"
 include("hello-world")
 include("time-picker")
+include("sudoku")
